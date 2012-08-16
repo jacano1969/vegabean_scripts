@@ -1,0 +1,374 @@
+#!/bin/bash
+
+#
+# This scripts generates a flashable CWM zip for the Advent Vega
+# 
+# Scanno
+#
+
+#
+# Set directories
+#
+SOURCE_SYSTEM_DIR=/home/menno/vegabean/out/target/product/shuttle/system
+SCRIPT_DIR=/home/data/android/vegabean/META-INF
+TARGET_SYSTEM_DIR=/home/data/android/vegabean/system
+TARGET_DATA_DIR=/home/data/android/vegabean/data
+BOOT_IMG_FILE=boot.img
+
+PLACEHOLDER_MESSAGE="Do not remove this placeholder"
+PLACEHOLDER_FILE=.squash_placeholder
+
+ZIP_FILE=VegaBean-Beta2-120dpi-Apex.zip
+
+#
+# Copy the build system dir to 
+#
+
+cp $SOURCE_SYSTEM_DIR $TARGET_SYSTEM_DIR --recursive
+
+#
+# Remove not needed apps
+# To save space on /system
+#
+# rm $TARGET_SYSTEM_DIR/app/Gallery2.apk
+rm $TARGET_SYSTEM_DIR/app/Music.apk
+rm $TARGET_SYSTEM_DIR/app/OpenWnn.apk 
+rm $TARGET_SYSTEM_DIR/app/PinyinIME.apk
+rm $TARGET_SYSTEM_DIR/app/recovery-reboot.apk
+rm $TARGET_SYSTEM_DIR/app/VideoEditor.apk
+rm $TARGET_SYSTEM_DIR/app/QuickSearchBox.apk
+
+#
+# The new Google Apps needs to replace the QuickSearchBox
+# Lets rename it...
+#
+#mv $TARGET_SYSTEM_DIR/app/Velvet.apk $TARGET_SYSTEM_DIR/app/QuickSearchBox.apk
+
+# Change the file permissions
+#
+
+cd $TARGET_SYSTEM_DIR
+#chown root:root * --recursive
+chmod 755 * --recursive
+
+#
+# Create the squashfs filesystems
+#
+
+cd $TARGET_SYSTEM_DIR/app
+mksquashfs * ../app.sfs -all-root -always-use-fragments -comp xz
+rm * --recursive
+echo $PLACEHOLDER_MESSAGE > $PLACEHOLDER_FILE
+
+cd $TARGET_SYSTEM_DIR/fonts
+mksquashfs * ../fonts.sfs -all-root -always-use-fragments -comp xz
+rm * --recursive
+echo $PLACEHOLDER_MESSAGE > $PLACEHOLDER_FILE
+
+cd $TARGET_SYSTEM_DIR/framework
+mksquashfs * ../framework.sfs -all-root -always-use-fragments -comp xz
+rm * --recursive
+echo $PLACEHOLDER_MESSAGE > $PLACEHOLDER_FILE
+
+cd $TARGET_SYSTEM_DIR/lib
+mksquashfs * ../lib.sfs -all-root -always-use-fragments -comp xz
+rm * --recursive
+echo $PLACEHOLDER_MESSAGE > $PLACEHOLDER_FILE
+
+cd $TARGET_SYSTEM_DIR/usr
+mksquashfs * ../usr.sfs -all-root -always-use-fragments -comp xz
+rm * --recursive
+echo $PLACEHOLDER_MESSAGE > $PLACEHOLDER_FILE
+
+#cd $TARGET_SYSTEM_DIR/media
+#echo $PLACEHOLDER_MESSAGE > $PLACEHOLDER_FILE
+#echo $PLACEHOLDER_MESSAGE > ./audio/$PLACEHOLDER_FILE
+#mksquashfs * ../media.sfs -all-root -always-use-fragments -comp xz
+#rm * --recursive
+#echo $PLACEHOLDER_MESSAGE > $PLACEHOLDER_FILE
+#
+# Remove toolbox links
+#
+cd $TARGET_SYSTEM_DIR/bin
+rm ./ls 
+rm ./mount 
+rm ./cat 
+rm ./ps 
+rm ./kill 
+rm ./ln 
+rm ./insmod 
+rm ./rmmod 
+rm ./lsmod 
+rm ./ifconfig 
+rm ./setconsole 
+rm ./rm 
+rm ./mkdir 
+rm ./rmdir 
+rm ./reboot 
+rm ./getevent 
+rm ./sendevent 
+rm ./date 
+rm ./wipe 
+rm ./sync 
+rm ./umount 
+rm ./start 
+rm ./stop 
+rm ./notify 
+rm ./cmp 
+rm ./dmesg 
+rm ./route 
+rm ./hd 
+rm ./dd 
+rm ./df 
+rm ./getprop 
+rm ./setprop 
+rm ./watchprops 
+rm ./log 
+rm ./sleep 
+rm ./renice 
+rm ./printenv 
+rm ./smd 
+rm ./chmod 
+rm ./chown 
+rm ./newfs_msdos 
+rm ./netstat 
+rm ./ioctl 
+rm ./mv 
+rm ./schedtop 
+rm ./top 
+rm ./iftop 
+rm ./id 
+rm ./uptime 
+rm ./vmstat 
+rm ./nandread 
+rm ./ionice 
+rm ./touch 
+rm ./lsof
+rm ./r
+rm ./sh
+
+#
+# Remove busybox links
+#
+
+cd $TARGET_SYSTEM_DIR/xbin
+
+rm ./[
+rm ./[[
+rm ./adjtimex
+rm ./arp
+rm ./ash
+rm ./awk
+rm ./base64
+rm ./basename
+rm ./bbconfig
+rm ./blkid
+rm ./blockdev
+rm ./brctl
+rm ./bunzip2
+rm ./bzcat
+rm ./bzip2
+rm ./cal
+rm ./cat
+rm ./catv
+rm ./chattr
+rm ./chgrp
+rm ./chmod
+rm ./chown
+rm ./chroot
+rm ./clear
+rm ./cmp
+rm ./comm
+rm ./cp
+rm ./cpio
+rm ./crond
+rm ./crontab
+rm ./cut
+rm ./date
+rm ./dc
+rm ./dd
+rm ./depmod
+rm ./devmem
+rm ./df
+rm ./diff
+rm ./dirname
+rm ./dmesg
+rm ./dnsd
+rm ./dos2unix
+rm ./du
+rm ./echo
+rm ./ed
+rm ./egrep
+rm ./env
+rm ./expand
+rm ./expr
+rm ./false
+rm ./fdisk
+rm ./fgrep
+rm ./find
+rm ./flashcp
+rm ./flash_unlock
+rm ./flash_lock
+rm ./flock
+rm ./fold
+rm ./free
+rm ./freeramdisk
+rm ./fsync
+rm ./ftpget
+rm ./ftpput
+rm ./fuser
+rm ./getopt
+rm ./grep
+rm ./groups
+rm ./gunzip
+rm ./gzip
+rm ./halt
+rm ./head
+rm ./hexdump
+rm ./id
+rm ./ifconfig
+rm ./insmod
+rm ./iostat
+rm ./install
+rm ./ip
+rm ./kill
+rm ./killall
+rm ./killall5
+rm ./length
+rm ./less
+rm ./ln
+rm ./losetup
+rm ./ls
+rm ./lsattr
+rm ./lsmod
+rm ./lsusb
+rm ./lzcat
+rm ./lzma
+rm ./lzop
+rm ./lzopcat
+rm ./man
+rm ./md5sum
+rm ./mesg
+rm ./mkdir
+rm ./mke2fs
+rm ./mkfifo
+rm ./mkfs.ext2
+rm ./mkfs.vfat
+rm ./mknod
+rm ./mkswap
+rm ./mktemp
+rm ./modinfo
+rm ./modprobe
+rm ./more
+rm ./mount
+rm ./mountpoint
+rm ./mpstat
+rm ./mv
+rm ./nanddump
+rm ./nandwrite
+rm ./nc
+rm ./netstat
+rm ./nice
+rm ./nohup
+rm ./nslookup
+rm ./ntpd
+rm ./od
+rm ./patch
+rm ./pgrep
+rm ./pidof
+rm ./ping
+rm ./pkill
+rm ./printenv
+rm ./printf
+rm ./ps
+rm ./pstree
+rm ./pmap
+rm ./poweroff
+rm ./pwd
+rm ./pwdx
+rm ./rdev
+rm ./readlink
+rm ./realpath
+rm ./renice
+rm ./reset
+rm ./resize
+rm ./rev
+rm ./rm
+rm ./rmdir
+rm ./rmmod
+rm ./route
+rm ./run-parts
+rm ./rx
+rm ./sed
+rm ./seq
+rm ./setconsole
+rm ./setserial
+rm ./setsid
+rm ./sh
+rm ./sha1sum
+rm ./sha256sum
+rm ./sha512sum
+rm ./sleep
+rm ./sort
+rm ./split
+rm ./stat
+rm ./strings
+rm ./stty
+rm ./sum
+rm ./swapoff
+rm ./swapon
+rm ./sync
+rm ./sysctl
+rm ./tac
+rm ./tail
+rm ./tar
+rm ./taskset
+rm ./tee
+rm ./telnet
+rm ./telnetd
+rm ./test
+rm ./tftp
+rm ./tftpd
+rm ./time
+rm ./timeout
+rm ./top
+rm ./touch
+rm ./tr
+rm ./traceroute
+rm ./true
+rm ./ttysize
+rm ./tune2fs
+rm ./umount
+rm ./uname
+rm ./uncompress
+rm ./unexpand
+rm ./uniq
+rm ./unix2dos
+rm ./unxz
+rm ./unlzma
+rm ./unlzop
+rm ./unzip
+rm ./uptime
+rm ./usleep
+rm ./uudecode
+rm ./uuencode
+rm ./vi
+rm ./watch
+rm ./wc
+rm ./wget
+rm ./which
+rm ./whoami
+rm ./xargs
+rm ./xzcat
+rm ./xz
+rm ./yes
+rm ./zcat
+
+#
+# Create a CWM zip
+#
+
+cd $TARGET_SYSTEM_DIR
+cd ..
+zip $ZIP_FILE system data META-INF $BOOT_IMG_FILE -r
+

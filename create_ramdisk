@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo find . | sudo cpio -o -H newc | sudo gzip > ../newramdisk.cpio.gz
+
